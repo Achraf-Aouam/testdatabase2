@@ -16,6 +16,12 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -109,7 +115,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Ed Roh
+                  Achraf Aouam
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   VP Fancy Admin
@@ -137,19 +143,19 @@ const Sidebar = () => {
             <Item
               title="products"
               to="/team"
-              icon={<PeopleOutlinedIcon />}
+              icon={<CategoryOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="sales"
+              to="/contacts"
+              icon={<AttachMoneyOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="payments"
-              to="/contacts"
-              icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Invoices Balances"
               to="/invoices"
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
@@ -166,7 +172,7 @@ const Sidebar = () => {
             <Item
               title="supply"
               to="/form"
-              icon={<PersonOutlinedIcon />}
+              icon={<Inventory2OutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -174,7 +180,7 @@ const Sidebar = () => {
             <Item
               title="add product"
               to="/faq"
-              icon={<HelpOutlineOutlinedIcon />}
+              icon={<AddCircleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -184,33 +190,33 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Charts
+              Client
             </Typography>
             <Item
-              title="Bar Chart"
-              to="/bar"
-              icon={<BarChartOutlinedIcon />}
+              title="products"
+              to="/products"
+              icon={<CategoryOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Pie Chart"
-              to="/pie"
-              icon={<PieChartOutlineOutlinedIcon />}
+              title="cart"
+              to="/cart"
+              icon={<ShoppingCartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Line Chart"
-              to="/line"
-              icon={<TimelineOutlinedIcon />}
+              title="invoices"
+              to="/c_invoice"
+              icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Geography Chart"
-              to="/geography"
-              icon={<MapOutlinedIcon />}
+              title="pay"
+              to="/pay"
+              icon={<PaymentOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

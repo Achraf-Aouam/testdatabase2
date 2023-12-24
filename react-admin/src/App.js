@@ -15,6 +15,10 @@ import Pie from "./scenes/Pie";
 import FAQ from "./scenes/faq";
 import Geography from "./scenes/geography";
 import Login from "./scenes/login";
+import Products from "./scenes/products";
+import Cart from "./scenes/cart";
+import C_invoice from "./scenes/c_invoices";
+import Pay from "./scenes/pay";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -34,14 +38,17 @@ function App() {
               <Route path="/" element={<Login />} />
               <Route path="/team" element={<Team />} />
               <Route path="/dashboard" element={<Dashboard />} />
-
+              <Route path="/products" element={<Products />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/form" element={<Form />} />
               <Route path="/bar" element={<Bar />} />
+              <Route path="/c_invoice" element={<C_invoice />} />
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/pay" element={<Pay />} />
               {/* <Route path="/calendar" element={<Calendar />} /> */}
               <Route path="/geography" element={<Geography />} />
               {/* </Route> */}

@@ -41,7 +41,9 @@ app.post("/login", async (req, res) => {
 // Get all products
 app.get("/products", async (req, res) => {
   try {
-    const allProducts = await pool.query("SELECT * FROM product");
+    const allProducts = await pool.query(
+      "SELECT product_id AS id, * FROM product"
+    );
     res.json(allProducts.rows);
   } catch (error) {
     console.error(error.message);
@@ -61,21 +63,6 @@ app.get("/products/:id", async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Failed to fetch products" });
-  }
-});
-
-// Get all invoices for a specific user
-app.get("/users/:userId/invoices", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const invoices = await pool.query(
-      "SELECT * FROM invoice WHERE client_id = $1",
-      [userId]
-    );
-    res.json(invoices.rows);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: "Failed to fetch invoices" });
   }
 });
 
@@ -215,7 +202,7 @@ app.get("/users/:userId/invoices", async (req, res) => {
     try {
       const { userId } = req.params;
       const invoices = await pool.query(
-        "SELECT * FROM invoice WHERE client_id = $1",
+        "SELECT invoice_id as id,* FROM invoice WHERE client_id = $1",
         [userId]
       );
       res.json(invoices.rows);
@@ -306,5 +293,112 @@ app.get("/users/:userId/recentpayments", async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Failed to fetch recent payments" });
+  }
+});
+
+// add to cart
+app.post("/cart/:basket_id", async (req, res) => {
+  try {
+    const basket_id = req.params.basket_id;
+    const product_ids = req.body.ids;
+
+    for (let id of product_ids) {
+      try {
+        await pool.query("SELECT add_to_basket($1, $2)", [basket_id, id]);
+      } catch (err) {
+        console.error(`Failed to add product ${id} to basket: ${err.message}`);
+        // You can decide what to do here. For example, you could send a response to the client with an error message.
+        res.status(500).json({
+          error: `Failed to add product ${id} to basket: ${err.message}`,
+        });
+        return;
+      }
+    }
+
+    res.json({ message: "Products added to cart successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding products to the cart" });
+  }
+});
+
+//get all products in cart
+app.get("/users/cart/:user", async (req, res) => {
+  try {
+    const user_id = req.params.user;
+    //const basket_id = req.params.basket_id;
+    const products = await pool.query(
+      `
+      SELECT p.product_id as id, p.product_description, SUM(p.product_price) AS total_price, SUM(bm.basket_map_quant) AS total_quantity
+      FROM basket_map bm
+      JOIN product p ON bm.product_id = p.product_id
+      WHERE bm.basket_id = $1
+      GROUP BY p.product_id, p.product_description
+    `,
+      [user_id]
+    );
+    res.json(products.rows);
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching products in the cart" });
+  }
+});
+
+// cereate invoice for list selected products by looping throught body that contains product ids
+app.post("/users/:userId/invoice", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const ids = req.body.ids;
+    console.log(ids);
+    const invoice = await pool.query(
+      "INSERT INTO invoice (client_id) VALUES ($1) RETURNING *",
+      [userId]
+    );
+    console.log(invoice.rows[0].invoice_id);
+    for (let product of ids) {
+      try {
+        await pool.query(
+          "INSERT INTO invoice_map (invoice_id, product_id, invoice_map_quantity) VALUES ($1, $2, $3)",
+          [invoice.rows[0].invoice_id, product, 1]
+        );
+      } catch (err) {
+        console.error(`Failed to add product ${id} to basket: ${err.message}`);
+        // You can decide what to do here. For example, you could send a response to the client with an error message.
+        res.status(500).json({
+          error: `Failed to add product ${id} to basket: ${err.message}`,
+        });
+        return;
+      }
+    }
+
+    res.json({ message: "Products added to cart successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding products to the cart" });
+  }
+});
+
+// create a payment
+app.post("/users/:userId/payment", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { invoiceid, paymenttype, amount } = req.body;
+    console.log(invoiceid);
+    // Create the payment
+    const payment = await pool.query(
+      "INSERT INTO payment_details (invoice_id, payment_amount, payment_type) VALUES ($1, $2, $3) RETURNING *",
+      [invoiceid, amount, paymenttype]
+    );
+
+    res.json({ message: "Payment created successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Failed to create payment" });
   }
 });
